@@ -8,11 +8,40 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.nexus.messenger.ui.screens.ChatListScreen
 import com.nexus.messenger.ui.screens.ChatScreen
+import com.nexus.messenger.ui.screens.LoginScreen
+import com.nexus.messenger.ui.screens.RegisterScreen
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "chatList") {
+    NavHost(navController = navController, startDestination = "login") {
+        composable("login") {
+            LoginScreen(
+                onNavigateToRegister = {
+                    navController.navigate("register")
+                },
+                onLoginSuccess = {
+                    navController.navigate("chatList") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
+            )
+        }
+        composable("register") {
+            RegisterScreen(
+                onNavigateToLogin = {
+                    navController.navigate("login") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                },
+                onRegisterSuccess = {
+                    navController.navigate("chatList") {
+                        popUpTo("register") { inclusive = true }
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
+            )
+        }
         composable("chatList") {
             ChatListScreen(
                 onChatSelected = { chatId ->
