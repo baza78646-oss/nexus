@@ -35,4 +35,18 @@ class UserRepository {
             Result.failure(e)
         }
     }
+
+    suspend fun getUserProfileByEmail(email: String): Result<UserProfile?> {
+        return try {
+            val querySnapshot = usersCollection.whereEqualTo("email", email).get().await()
+            if (!querySnapshot.isEmpty) {
+                val profile = querySnapshot.documents[0].toObject(UserProfile::class.java)
+                Result.success(profile)
+            } else {
+                Result.success(null)
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
